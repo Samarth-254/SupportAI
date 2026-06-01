@@ -273,11 +273,9 @@ export default function Login({ isAdminLogin = false }) {
                 </div>
               )}
 
-              {isAdminLogin && import.meta.env.DEV && (
+              {isAdminLogin && (
                 <p className="text-center text-xs text-gray-500 mt-5">
-                  Demo admin credentials are{' '}
-                  <span className="text-brand-orange font-mono">admin</span> /{' '}
-                  <span className="text-brand-orange font-mono">admin123</span>
+                  Demo credentials: <span className="text-brand-orange font-mono">admin</span> / <span className="text-brand-orange font-mono">admin123</span>
                 </p>
               )}
             </div>
