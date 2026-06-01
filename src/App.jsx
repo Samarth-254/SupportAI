@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Chatbot from './pages/Chatbot';
@@ -79,6 +80,7 @@ function App() {
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      <Analytics debug={process.env.NODE_ENV === 'development'} />
     </BrowserRouter>
   );
 }
