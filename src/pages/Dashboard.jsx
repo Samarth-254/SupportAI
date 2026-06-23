@@ -18,7 +18,9 @@ import {
   RefreshCw,
   Edit2,
   UserCheck,
-  TrendingUp
+  TrendingUp,
+  Menu,
+  X
 } from 'lucide-react';
 import {
   AreaChart,
@@ -40,6 +42,7 @@ const normalizeItem = (item) => ({
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('overview');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [totalUsers, setTotalUsers] = useState(0);
   const [documents, setDocuments] = useState([]);
   const [qas, setQas] = useState([]);
@@ -398,19 +401,38 @@ export default function Dashboard() {
   const avgInteractions = totalChats > 0 ? (totalMessages / totalChats).toFixed(1) : 0;
 
   return (
-    <div className="min-h-screen bg-[#070708] flex">
-      <aside className="w-64 bg-brand-dark-950 border-r border-brand-dark-800 flex flex-col justify-between p-6">
+    <div className="min-h-screen bg-[#070708] flex relative">
+      {/* Sidebar backdrop overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 z-40 md:hidden transition-opacity duration-300"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      <aside className={`fixed md:relative inset-y-0 left-0 z-50 md:z-10 w-64 bg-brand-dark-950 border-r border-brand-dark-800 flex flex-col justify-between p-6 transition-transform duration-300 ease-in-out transform ${
+        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      } md:translate-x-0 h-full`}>
         <div className="space-y-8">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-brand-dark-900 border border-brand-orange/20 rounded-xl">
-              <LayoutDashboard className="w-5 h-5 text-brand-orange" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-brand-dark-900 border border-brand-orange/20 rounded-xl">
+                <LayoutDashboard className="w-5 h-5 text-brand-orange" />
+              </div>
+              <span className="font-bold text-lg text-white">Bot Console</span>
             </div>
-            <span className="font-bold text-lg text-white">Bot Console</span>
+            <button
+              onClick={() => setSidebarOpen(false)}
+              title="Close sidebar"
+              className="md:hidden p-1.5 text-gray-400 hover:text-white rounded-lg hover:bg-brand-dark-900 border border-brand-dark-850"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
 
           <nav className="space-y-1">
             <button
-              onClick={() => setActiveTab('overview')}
+              onClick={() => { setActiveTab('overview'); setSidebarOpen(false); }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
                 activeTab === 'overview'
                   ? 'bg-brand-orange text-white shadow-[0_4px_12px_rgba(255,102,0,0.2)]'
@@ -422,7 +444,7 @@ export default function Dashboard() {
             </button>
 
             <button
-              onClick={() => setActiveTab('documents')}
+              onClick={() => { setActiveTab('documents'); setSidebarOpen(false); }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
                 activeTab === 'documents'
                   ? 'bg-brand-orange text-white shadow-[0_4px_12px_rgba(255,102,0,0.2)]'
@@ -434,7 +456,7 @@ export default function Dashboard() {
             </button>
 
             <button
-              onClick={() => setActiveTab('qa')}
+              onClick={() => { setActiveTab('qa'); setSidebarOpen(false); }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
                 activeTab === 'qa'
                   ? 'bg-brand-orange text-white shadow-[0_4px_12px_rgba(255,102,0,0.2)]'
@@ -446,7 +468,7 @@ export default function Dashboard() {
             </button>
 
             <button
-              onClick={() => setActiveTab('chats')}
+              onClick={() => { setActiveTab('chats'); setSidebarOpen(false); }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
                 activeTab === 'chats'
                   ? 'bg-brand-orange text-white shadow-[0_4px_12px_rgba(255,102,0,0.2)]'
@@ -485,21 +507,30 @@ export default function Dashboard() {
       </aside>
 
       <main className="flex-1 flex flex-col h-screen overflow-hidden bg-[#070708]">
-        <div className="p-8 pb-4">
-          <header className="flex justify-between items-center pb-4 border-b border-brand-dark-800">
-            <div>
-              <h1 className="text-2xl font-bold text-white capitalize">
-                {activeTab === 'qa'
-                  ? 'Custom QA Manager'
-                  : activeTab === 'chats'
-                  ? 'User Logs'
-                  : activeTab === 'documents'
-                  ? 'Knowledge Base'
-                  : 'Dashboard'}
-              </h1>
-              <p className="text-sm text-gray-400">
-                Configure parameters and feed sources to support customer chatbot agents.
-              </p>
+        <div className="p-4 md:p-8 pb-4">
+          <header className="flex justify-between items-center pb-4 border-b border-brand-dark-800 gap-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <button
+                onClick={() => setSidebarOpen(true)}
+                title="Open menu"
+                className="md:hidden p-2.5 text-gray-400 hover:text-white bg-brand-dark-900 border border-brand-dark-800 rounded-xl flex items-center justify-center flex-shrink-0"
+              >
+                <Menu className="w-4 h-4" />
+              </button>
+              <div className="min-w-0">
+                <h1 className="text-xl md:text-2xl font-bold text-white capitalize truncate">
+                  {activeTab === 'qa'
+                    ? 'Custom QA Manager'
+                    : activeTab === 'chats'
+                    ? 'User Logs'
+                    : activeTab === 'documents'
+                    ? 'Knowledge Base'
+                    : 'Dashboard'}
+                </h1>
+                <p className="text-xs md:text-sm text-gray-400 truncate hidden sm:block">
+                  Configure parameters and feed sources to support SupportAI chatbot agents.
+                </p>
+              </div>
             </div>
 
             <button
@@ -526,55 +557,55 @@ export default function Dashboard() {
           )}
         </div>
 
-        <div className="flex-1 overflow-y-auto px-8 pb-8">
+        <div className="flex-1 overflow-y-auto px-4 md:px-8 pb-8">
           {activeTab === 'overview' && (
             <div className="space-y-8 animate-fade-in-up">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="glow-card p-6 flex items-center justify-between">
-                  <div>
-                    <p className="text-xs font-medium text-gray-400 uppercase tracking-wider">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+                <div className="glow-card p-3 sm:p-6 flex items-center justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="text-[10px] sm:text-xs font-medium text-gray-400 uppercase tracking-wider truncate">
                       Total Users
                     </p>
-                    <p className="text-3xl font-extrabold text-white mt-2">{totalUsers}</p>
+                    <p className="text-xl sm:text-3xl font-extrabold text-white mt-1 sm:mt-2">{totalUsers}</p>
                   </div>
-                  <div className="p-3.5 bg-brand-dark-950 border border-brand-dark-800 text-brand-orange rounded-xl">
-                    <UserCheck className="w-6 h-6" />
+                  <div className="p-2 sm:p-3.5 bg-brand-dark-950 border border-brand-dark-800 text-brand-orange rounded-xl flex-shrink-0">
+                    <UserCheck className="w-4 h-4 sm:w-6 sm:h-6" />
                   </div>
                 </div>
 
-                <div className="glow-card p-6 flex items-center justify-between">
-                  <div>
-                    <p className="text-xs font-medium text-gray-400 uppercase tracking-wider">
+                <div className="glow-card p-3 sm:p-6 flex items-center justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="text-[10px] sm:text-xs font-medium text-gray-400 uppercase tracking-wider truncate">
                       Documents
                     </p>
-                    <p className="text-3xl font-extrabold text-white mt-2">{docCount}</p>
+                    <p className="text-xl sm:text-3xl font-extrabold text-white mt-1 sm:mt-2">{docCount}</p>
                   </div>
-                  <div className="p-3.5 bg-brand-dark-950 border border-brand-dark-800 text-brand-orange rounded-xl">
-                    <FileText className="w-6 h-6" />
+                  <div className="p-2 sm:p-3.5 bg-brand-dark-950 border border-brand-dark-800 text-brand-orange rounded-xl flex-shrink-0">
+                    <FileText className="w-4 h-4 sm:w-6 sm:h-6" />
                   </div>
                 </div>
 
-                <div className="glow-card p-6 flex items-center justify-between">
-                  <div>
-                    <p className="text-xs font-medium text-gray-400 uppercase tracking-wider">
+                <div className="glow-card p-3 sm:p-6 flex items-center justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="text-[10px] sm:text-xs font-medium text-gray-400 uppercase tracking-wider truncate">
                       Avg. Interac./Session
                     </p>
-                    <p className="text-3xl font-extrabold text-white mt-2">{avgInteractions}</p>
+                    <p className="text-xl sm:text-3xl font-extrabold text-white mt-1 sm:mt-2">{avgInteractions}</p>
                   </div>
-                  <div className="p-3.5 bg-brand-dark-950 border border-brand-dark-800 text-brand-orange rounded-xl">
-                    <TrendingUp className="w-6 h-6" />
+                  <div className="p-2 sm:p-3.5 bg-brand-dark-950 border border-brand-dark-800 text-brand-orange rounded-xl flex-shrink-0">
+                    <TrendingUp className="w-4 h-4 sm:w-6 sm:h-6" />
                   </div>
                 </div>
 
-                <div className="glow-card p-6 flex items-center justify-between">
-                  <div>
-                    <p className="text-xs font-medium text-gray-400 uppercase tracking-wider">
+                <div className="glow-card p-3 sm:p-6 flex items-center justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="text-[10px] sm:text-xs font-medium text-gray-400 uppercase tracking-wider truncate">
                       Total Chats
                     </p>
-                    <p className="text-3xl font-extrabold text-white mt-2">{totalChats}</p>
+                    <p className="text-xl sm:text-3xl font-extrabold text-white mt-1 sm:mt-2">{totalChats}</p>
                   </div>
-                  <div className="p-3.5 bg-brand-dark-950 border border-brand-dark-800 text-brand-orange rounded-xl">
-                    <MessageSquare className="w-6 h-6" />
+                  <div className="p-2 sm:p-3.5 bg-brand-dark-950 border border-brand-dark-800 text-brand-orange rounded-xl flex-shrink-0">
+                    <MessageSquare className="w-4 h-4 sm:w-6 sm:h-6" />
                   </div>
                 </div>
               </div>
@@ -863,21 +894,21 @@ export default function Dashboard() {
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm text-gray-300">
+                    <table className="w-full min-w-[750px] text-left text-sm text-gray-300">
                       <thead className="bg-[#0b0b0d] text-gray-400 font-medium text-xs border-b border-brand-dark-800">
                         <tr>
-                          <th className="px-6 py-4">Filename</th>
-                          <th className="px-6 py-4">Type</th>
-                          <th className="px-6 py-4">Size</th>
-                          <th className="px-6 py-4">Chunks Ingested</th>
-                          <th className="px-6 py-4">Upload Date</th>
-                          <th className="px-6 py-4 text-right">Action</th>
+                          <th className="px-4 md:px-6 py-3 md:py-4">Filename</th>
+                          <th className="px-4 md:px-6 py-3 md:py-4">Type</th>
+                          <th className="px-4 md:px-6 py-3 md:py-4">Size</th>
+                          <th className="px-4 md:px-6 py-3 md:py-4 text-center">Chunks Ingested</th>
+                          <th className="px-4 md:px-6 py-3 md:py-4">Upload Date</th>
+                          <th className="px-4 md:px-6 py-3 md:py-4 text-right">Action</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-brand-dark-850">
                         {documents.map((doc) => (
                           <tr key={doc.id} className="hover:bg-brand-dark-900/30 transition-colors">
-                            <td className="px-6 py-4 font-medium text-white truncate max-w-[240px]">
+                            <td className="px-4 md:px-6 py-3 md:py-4 font-medium text-white truncate max-w-[200px]">
                               <a
                                 href={doc.cloudinaryUrl}
                                 target="_blank"
@@ -888,19 +919,19 @@ export default function Dashboard() {
                                 {doc.filename}
                               </a>
                             </td>
-                            <td className="px-6 py-4">
+                            <td className="px-4 md:px-6 py-3 md:py-4">
                               <span className="uppercase text-[10px] font-bold tracking-wider px-2 py-0.5 bg-brand-dark-900 border border-brand-dark-800 rounded-md">
                                 {doc.fileType}
                               </span>
                             </td>
-                            <td className="px-6 py-4 text-gray-400">{formatBytes(doc.fileSize)}</td>
-                            <td className="px-6 py-4 text-center font-mono font-semibold text-brand-orange/80">
+                            <td className="px-4 md:px-6 py-3 md:py-4 text-gray-400">{formatBytes(doc.fileSize)}</td>
+                            <td className="px-4 md:px-6 py-3 md:py-4 text-center font-mono font-semibold text-brand-orange/80">
                               {doc.chunksCount}
                             </td>
-                            <td className="px-6 py-4 text-gray-400 text-xs">
+                            <td className="px-4 md:px-6 py-3 md:py-4 text-gray-400 text-xs">
                               {new Date(doc.createdAt).toLocaleDateString()}
                             </td>
-                            <td className="px-6 py-4 text-right">
+                            <td className="px-4 md:px-6 py-3 md:py-4 text-right">
                               <button
                                 onClick={() => handleDeleteDocument(doc.id, doc.filename)}
                                 className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-950/20 rounded-lg transition-all duration-200"
@@ -1005,11 +1036,11 @@ export default function Dashboard() {
 
           {activeTab === 'chats' && (
             <div className="space-y-6 animate-fade-in-up">
-              <div className="flex justify-end">
+              <div className="flex justify-end w-full">
                 <button
                   onClick={handleClearChatHistory}
                   disabled={chats.length === 0}
-                  className="secondary-btn flex items-center justify-center gap-2 text-sm text-red-400 border-red-950/40 hover:bg-red-950/20 hover:border-red-500/30 disabled:opacity-50"
+                  className="w-full sm:w-auto secondary-btn flex items-center justify-center gap-2 text-sm text-red-400 border-red-950/40 hover:bg-red-950/20 hover:border-red-500/30 disabled:opacity-50"
                 >
                   <Trash2 className="w-4 h-4" />
                   Clear Chat History
@@ -1033,9 +1064,9 @@ export default function Dashboard() {
                     {chats.map((chat) => (
                       <div
                         key={chat.id}
-                        className="p-6 space-y-3 hover:bg-brand-dark-900/10 transition-colors"
+                        className="p-4 md:p-6 space-y-3 hover:bg-brand-dark-900/10 transition-colors"
                       >
-                        <div className="flex justify-between items-center">
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                           <span
                             className={`text-[10px] px-2 py-0.5 rounded-full font-bold tracking-wider uppercase ${getSourceBadgeColor(
                               chat.source
@@ -1075,7 +1106,7 @@ export default function Dashboard() {
 
       {showQaModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in-up">
-          <div className="bg-brand-dark-950 border border-brand-dark-800 rounded-3xl w-full max-w-xl p-6 shadow-2xl space-y-6">
+          <div className="bg-brand-dark-950 border border-brand-dark-800 rounded-3xl w-full max-w-xl p-6 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b border-brand-dark-800 pb-3">
               <h3 className="text-lg font-bold text-white">
                 {editingQa ? 'Modify QA Pair' : 'Create Custom QA Override'}

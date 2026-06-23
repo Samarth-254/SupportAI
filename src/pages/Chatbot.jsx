@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../api';
 import Sidebar from '../components/Sidebar';
-import { Send, Terminal } from 'lucide-react';
+import { Send, Bot, Menu } from 'lucide-react';
 
 function getDateLabel(date) {
   const d = new Date(date);
@@ -61,10 +61,11 @@ function injectDateSeparators(messages) {
 export default function Chatbot() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [messages, setMessages] = useState([
     {
       id: 'welcome',
-      text: "Hey there! 👋 I'm your customer support assistant. How can I help you today?",
+      text: "Hey there! 👋 I'm your SupportAI assistant. How can I help you today?",
       sender: 'bot',
       timestamp: new Date(),
     },
@@ -160,7 +161,6 @@ export default function Chatbot() {
     setSuggestions([
       'What is your refund policy?',
       'How long does shipping take?',
-      'How do I cancel my subscription?',
       'How can I contact support?',
     ]);
   }, []);
@@ -271,27 +271,28 @@ export default function Chatbot() {
     setMessages([
       {
         id: 'welcome',
-        text: "Hey there! 👋 I'm your customer support assistant. How can I help you today?",
+        text: "Hey there! 👋 I'm your SupportAI assistant. How can I help you today?",
         sender: 'bot',
         timestamp: new Date(),
       },
     ]);
+    setSidebarOpen(false);
   };
 
- const handleLogout = () => {
-  const currentUser = api.auth.getCurrentUser();
+  const handleLogout = () => {
+    const currentUser = api.auth.getCurrentUser();
 
-  api.auth.logout();
-  setUser(null);
-  setPastSessions([]);
-  resetChat();
+    api.auth.logout();
+    setUser(null);
+    setPastSessions([]);
+    resetChat();
 
-  if (currentUser?.role === 'admin') {
-    navigate('/admin-login', { replace: true });
-  } else {
-    navigate('/', { replace: true });
-  }
-};
+    if (currentUser?.role === 'admin') {
+      navigate('/admin-login', { replace: true });
+    } else {
+      navigate('/', { replace: true });
+    }
+  };
 
   const loadSession = (session) => {
     setCurrentSessionId(session.id);
@@ -318,6 +319,7 @@ export default function Chatbot() {
       });
 
     setMessages(historyMsgs);
+    setSidebarOpen(false);
   };
 
   const fmtTime = (d) =>
@@ -343,19 +345,33 @@ export default function Chatbot() {
         resetChat={resetChat}
         loadSession={loadSession}
         sendMessage={sendMessage}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
       />
+
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 z-40 md:hidden transition-opacity duration-300"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
 
       <main className="flex-1 flex flex-col overflow-hidden z-10">
         <header className="flex-shrink-0 p-4 border-b border-brand-dark-800 bg-brand-dark-950/60 flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-brand-dark-900 border border-brand-orange/20 flex items-center justify-center">
-            <Terminal className="w-4 h-4 text-brand-orange" />
-          </div>
+          <button
+            onClick={() => setSidebarOpen(true)}
+            title="Open sidebar"
+            className="md:hidden p-2 text-gray-400 hover:text-white bg-brand-dark-900 border border-brand-dark-800 rounded-xl flex items-center justify-center"
+          >
+            <Menu className="w-4 h-4" />
+          </button>
+          <Bot className="w-6 h-6 text-brand-orange flex-shrink-0" />
           <div>
-            <h2 className="font-semibold text-white text-sm">Customer Support</h2>
+            <h2 className="font-semibold text-white text-sm">SupportAI</h2>
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto px-6 py-5 space-y-5">
+        <div className="flex-1 overflow-y-auto px-4 md:px-6 py-5 space-y-5">
           {renderedItems.map((item) => {
             if (item.type === 'separator') {
               return <DateSeparator key={item.id} label={item.label} />;
@@ -365,16 +381,14 @@ export default function Chatbot() {
               <div
                 id={item.id}
                 key={item.id}
-                className={`flex flex-col max-w-[78%] ${
-                  item.sender === 'user' ? 'ml-auto items-end' : 'mr-auto items-start'
-                }`}
+                className={`flex flex-col max-w-[85%] md:max-w-[78%] ${item.sender === 'user' ? 'ml-auto items-end' : 'mr-auto items-start'
+                  }`}
               >
                 <div
-                  className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
-                    item.sender === 'user'
-                      ? 'bg-brand-orange text-white rounded-br-sm shadow-[0_4px_14px_rgba(255,102,0,0.2)]'
-                      : 'bg-brand-dark-900 border border-brand-dark-800 text-gray-100 rounded-bl-sm'
-                  }`}
+                  className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${item.sender === 'user'
+                    ? 'bg-brand-orange text-white rounded-br-sm shadow-[0_4px_14px_rgba(255,102,0,0.2)]'
+                    : 'bg-brand-dark-900 border border-brand-dark-800 text-gray-100 rounded-bl-sm'
+                    }`}
                 >
                   <p className="whitespace-pre-wrap">{item.text}</p>
                 </div>
@@ -386,7 +400,7 @@ export default function Chatbot() {
           })}
 
           {loading && (
-            <div className="flex flex-col items-start max-w-[78%] mr-auto">
+            <div className="flex flex-col items-start max-w-[85%] md:max-w-[78%] mr-auto">
               <div className="bg-brand-dark-900 border border-brand-dark-800 px-4 py-3.5 rounded-2xl rounded-bl-sm">
                 <div className="flex items-center gap-1">
                   <span className="dot"></span>
@@ -400,7 +414,7 @@ export default function Chatbot() {
           <div ref={messagesEndRef} />
         </div>
 
-        <footer className="flex-shrink-0 p-4 border-t border-brand-dark-800 bg-brand-dark-950/40">
+        <footer className="flex-shrink-0 p-3 md:p-4 border-t border-brand-dark-800 bg-brand-dark-950/40">
           <div className="relative flex items-center">
             <input
               type="text"
@@ -409,12 +423,12 @@ export default function Chatbot() {
               onKeyDown={handleKeyDown}
               disabled={loading}
               placeholder={user ? 'Ask anything (saved to your history)...' : 'Ask anything...'}
-              className="w-full bg-[#0d0d0f] border border-brand-dark-800 text-white rounded-2xl py-3.5 pl-5 pr-14 text-sm focus:outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange transition-all disabled:opacity-60"
+              className="w-full bg-[#0d0d0f] border border-brand-dark-800 text-white rounded-2xl py-3.5 pl-4 md:pl-5 pr-12 md:pr-14 text-xs md:text-sm focus:outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange transition-all disabled:opacity-60"
             />
             <button
               onClick={() => sendMessage()}
               disabled={loading || !input.trim()}
-              className="absolute right-2.5 p-2.5 bg-brand-orange hover:bg-brand-orange-600 disabled:opacity-30 disabled:pointer-events-none rounded-xl text-white transition-all duration-200 shadow-[0_2px_8px_rgba(255,102,0,0.3)]"
+              className="absolute right-2.5 p-2 md:p-2.5 bg-brand-orange hover:bg-brand-orange-600 disabled:opacity-30 disabled:pointer-events-none rounded-xl text-white transition-all duration-200 shadow-[0_2px_8px_rgba(255,102,0,0.3)]"
             >
               <Send className="w-4 h-4" />
             </button>

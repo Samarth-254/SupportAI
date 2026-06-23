@@ -74,7 +74,7 @@ export default function Login({ isAdminLogin = false }) {
 
   const leftPanel = isAdminLogin
     ? {
-        title: 'Customer Query Replying Chatbot',
+        title: 'SupportAI Console',
         description:
           'Manage knowledge sources, custom Q&A pairs, uploaded documents, and user query activity from one clean dashboard.',
         features: [
@@ -84,7 +84,7 @@ export default function Login({ isAdminLogin = false }) {
             text: 'Upload and manage PDFs, DOC, DOCX, spreadsheets, and similar support files.'
           },
           {
-            icon: <Sparkles className="w-4 h-4 text-brand-orange" />,
+            icon: <Bot className="w-4 h-4 text-brand-orange" />,
             title: 'Custom Q&A Control',
             text: 'Add, edit, and delete question-answer pairs for better reply quality.'
           },
@@ -96,7 +96,7 @@ export default function Login({ isAdminLogin = false }) {
         ]
       }
     : {
-        title: 'AI Support Assistant',
+        title: 'SupportAI',
         description: isRegistering
           ? 'Create your account to save conversations and get help faster whenever you return.'
           : 'Get instant help, continue previous chats, and access support whenever you need it.',
@@ -120,8 +120,8 @@ export default function Login({ isAdminLogin = false }) {
       };
 
   return (
-    <div className="h-screen overflow-hidden bg-[#070708] text-white">
-      <div className="h-full grid lg:grid-cols-2">
+    <div className="min-h-screen lg:h-screen lg:overflow-hidden bg-[#070708] text-white overflow-y-auto">
+      <div className="min-h-screen lg:h-full grid lg:grid-cols-2">
         <div className="relative hidden lg:flex flex-col justify-between px-12 py-10 border-r border-brand-dark-800 bg-[#111112] overflow-hidden">
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-20 left-16 w-64 h-64 bg-brand-orange-950/20 rounded-full blur-[110px]"></div>
@@ -129,12 +129,8 @@ export default function Login({ isAdminLogin = false }) {
           </div>
 
           <div className="relative z-10 max-w-lg">
-            <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-white/5 border border-white/10 shadow-[0_0_18px_rgba(255,102,0,0.08)] mb-6">
-              {isAdminLogin ? (
-                <Terminal className="w-7 h-7 text-brand-orange" />
-              ) : (
-                <Bot className="w-7 h-7 text-brand-orange" />
-              )}
+            <div className="mb-6">
+              <Bot className="w-10 h-10 text-brand-orange" />
             </div>
 
             <div className="mb-8">
@@ -170,7 +166,7 @@ export default function Login({ isAdminLogin = false }) {
           </div>
         </div>
 
-        <div className="relative flex items-center justify-center px-4 py-6 sm:px-6 lg:px-10 bg-[#f8f8f8] overflow-hidden">
+        <div className="relative flex items-center justify-center px-4 py-12 sm:px-6 lg:px-10 bg-[#f8f8f8] min-h-screen lg:min-h-0 overflow-y-auto">
           <div className="absolute inset-0 pointer-events-none hidden lg:block">
             <div className="absolute top-16 left-10 w-72 h-72 bg-brand-orange/10 rounded-full blur-[110px]"></div>
             <div className="absolute bottom-10 right-10 w-64 h-64 bg-brand-orange/10 rounded-full blur-[110px]"></div>
@@ -179,6 +175,13 @@ export default function Login({ isAdminLogin = false }) {
           <div className="w-full max-w-lg relative z-10">
             <div className="bg-white rounded-[28px] shadow-[0_20px_70px_rgba(0,0,0,0.12)] border border-black/5 p-6 sm:p-7 md:p-8">
               <div className="mb-6">
+                {/* Mobile-only logo indicator */}
+                <div className="inline-flex lg:hidden items-center gap-2 mb-4">
+                  <Bot className="w-6 h-6 text-brand-orange" />
+                  <span className="text-xs font-bold text-brand-orange uppercase tracking-wider">
+                    {isAdminLogin ? 'Admin Panel' : 'SupportAI'}
+                  </span>
+                </div>
                 <h2 className="text-3xl sm:text-[36px] font-bold tracking-tight text-[#111827] leading-tight">
                   {isAdminLogin
                     ? 'Admin Sign In'
@@ -191,7 +194,7 @@ export default function Login({ isAdminLogin = false }) {
                     ? 'Sign in to manage documents, Q&A pairs, and chatbot operations'
                     : isRegistering
                     ? 'Create an account to store chat history and continue conversations later'
-                    : 'Sign in to continue using your AI support assistant'}
+                    : 'Sign in to continue using your SupportAI assistant'}
                 </p>
               </div>
 

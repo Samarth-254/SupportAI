@@ -1,12 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Sparkles,
+  Bot,
   LogOut,
   ArrowRight,
   UserCheck,
   LogIn,
-  Plus
+  Plus,
+  X
 } from 'lucide-react';
 
 export default function Sidebar({
@@ -18,28 +19,39 @@ export default function Sidebar({
   handleLogout,
   resetChat,
   loadSession,
-  sendMessage
+  sendMessage,
+  isOpen,
+  onClose
 }) {
   const navigate = useNavigate();
 
   return (
-    <aside className="w-72 flex-shrink-0 bg-brand-dark-950/70 border-r border-brand-dark-800 flex flex-col z-10 overflow-hidden h-full">
+    <aside className={`fixed md:relative inset-y-0 left-0 z-50 md:z-10 w-72 flex-shrink-0 bg-brand-dark-950/95 md:bg-brand-dark-950/70 border-r border-brand-dark-800 flex flex-col overflow-hidden h-full transition-transform duration-300 ease-in-out transform ${
+      isOpen ? 'translate-x-0' : '-translate-x-full'
+    } md:transform-none`}>
       <div className="p-5 border-b border-brand-dark-800 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-2.5">
-          <div className="p-2 bg-brand-dark-900 border border-brand-orange/20 rounded-xl">
-            <Sparkles className="w-4 h-4 text-brand-orange" />
-          </div>
-          <span className="font-bold text-sm text-white">Support Agent</span>
+          <Bot className="w-6 h-6 text-brand-orange flex-shrink-0" />
+          <span className="font-bold text-sm text-white">SupportAI</span>
         </div>
 
-        {user?.role === 'admin' && (
+        <div className="flex items-center gap-2">
+          {user?.role === 'admin' && (
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="text-[10px] font-bold text-brand-orange px-2 py-0.5 bg-brand-orange-950/20 border border-brand-orange/20 rounded-md hover:bg-brand-orange/10 transition"
+            >
+              Admin
+            </button>
+          )}
           <button
-            onClick={() => navigate('/dashboard')}
-            className="text-[10px] font-bold text-brand-orange px-2 py-0.5 bg-brand-orange-950/20 border border-brand-orange/20 rounded-md hover:bg-brand-orange/10 transition"
+            onClick={onClose}
+            title="Close sidebar"
+            className="md:hidden p-1.5 text-gray-400 hover:text-white rounded-lg hover:bg-brand-dark-900 border border-brand-dark-850"
           >
-            Admin
+            <X className="w-4 h-4" />
           </button>
-        )}
+        </div>
       </div>
 
       <div className="px-4 pt-4 flex-shrink-0">
@@ -110,7 +122,7 @@ export default function Sidebar({
               {suggestions.map((q, idx) => (
                 <button
                   key={idx}
-                  onClick={() => sendMessage(q)}
+                  onClick={() => { sendMessage(q); onClose?.(); }}
                   disabled={loading}
                   className="text-left text-[11px] bg-[#0d0d0f] border border-brand-dark-800 hover:border-brand-orange/25 p-2 rounded-xl text-gray-400 hover:text-white transition-all flex items-center gap-2 group disabled:opacity-40"
                 >
