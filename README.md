@@ -8,6 +8,9 @@
 
 The client-side interface for the Customer Support Chatbot System. Built as a high-fidelity React 19 Single Page Application (SPA), it provides a responsive customer chatbot interface, session logs loader, and a secure admin control dashboard with analytics visualization.
 
+> [!NOTE]
+> This is the client-side frontend repository. For the server-side logic (RAG hybrid search, local vector embeddings, text chunking, and Groq SDK resolution), check out the [⚙️ Backend API Repository](https://github.com/Samarth-254/Chatbot-backend).
+
 ---
 
 ## 🎨 Screenshots & Interface Preview
