@@ -20,7 +20,8 @@ import {
   UserCheck,
   TrendingUp,
   Menu,
-  X
+  X,
+  ExternalLink
 } from 'lucide-react';
 import {
   AreaChart,
@@ -39,6 +40,176 @@ const normalizeItem = (item) => ({
   ...item,
   id: item?._id || item?.id
 });
+
+function DashboardSkeleton({ activeTab }) {
+  if (activeTab === 'overview') {
+    return (
+      <div className="space-y-8 animate-pulse">
+        {/* Metric Cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="glow-card p-3 sm:p-6 flex items-center justify-between gap-2 border-brand-dark-800 bg-brand-dark-950/20">
+              <div className="min-w-0 flex-1 space-y-3">
+                <div className="h-3 bg-brand-dark-800 rounded w-2/3"></div>
+                <div className="h-7 bg-brand-dark-800 rounded w-1/2"></div>
+              </div>
+              <div className="w-10 h-10 sm:w-14 sm:h-14 bg-brand-dark-800 rounded-xl flex-shrink-0"></div>
+            </div>
+          ))}
+        </div>
+
+        {/* Chart Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="glow-card p-6 lg:col-span-2 space-y-6 border-brand-dark-800 bg-brand-dark-950/20">
+            <div className="h-4 bg-brand-dark-800 rounded w-1/3"></div>
+            <div className="h-72 bg-brand-dark-900/60 rounded-xl flex items-center justify-center">
+              <div className="text-gray-600 text-xs">Generating analytics...</div>
+            </div>
+          </div>
+
+          <div className="glow-card p-6 space-y-6 border-brand-dark-800 bg-brand-dark-950/20">
+            <div className="h-4 bg-brand-dark-800 rounded w-1/2"></div>
+            <div className="h-60 flex items-center justify-center">
+              <div className="w-32 h-32 rounded-full border-[12px] border-brand-dark-900 border-t-brand-dark-800 animate-spin"></div>
+            </div>
+            <div className="space-y-2">
+              <div className="h-3 bg-brand-dark-800 rounded w-3/4"></div>
+              <div className="h-3 bg-brand-dark-800 rounded w-2/3"></div>
+              <div className="h-3 bg-brand-dark-800 rounded w-1/2"></div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Lists */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="glow-card p-6 h-[400px] flex flex-col space-y-4 border-brand-dark-800 bg-brand-dark-950/20">
+            <div className="h-4 bg-brand-dark-800 rounded w-1/3"></div>
+            <div className="flex-1 space-y-4">
+              {[1, 2, 3].map((idx) => (
+                <div key={idx} className="bg-brand-dark-900/50 border border-brand-dark-800 p-3 rounded-lg space-y-2">
+                  <div className="h-4 bg-brand-dark-800 rounded w-5/6"></div>
+                  <div className="h-3 bg-brand-dark-800 rounded w-1/4"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="glow-card p-6 h-[400px] flex flex-col space-y-4 border-brand-dark-800 bg-brand-dark-950/20">
+            <div className="h-4 bg-brand-dark-800 rounded w-1/3"></div>
+            <div className="flex-1 flex content-start flex-wrap gap-2">
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((idx) => (
+                <div key={idx} className="h-8 bg-brand-dark-900 border border-brand-dark-800 rounded-xl w-24"></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (activeTab === 'documents') {
+    return (
+      <div className="space-y-8 animate-pulse">
+        {/* Upload Box Placeholder */}
+        <div className="glow-card border-2 border-dashed border-brand-dark-800 p-10 flex flex-col items-center justify-center space-y-4 bg-brand-dark-950/20">
+          <div className="w-16 h-16 bg-brand-dark-800 rounded-2xl"></div>
+          <div className="h-4 bg-brand-dark-800 rounded w-1/3"></div>
+          <div className="h-3 bg-brand-dark-800 rounded w-1/4"></div>
+        </div>
+
+        {/* Table Skeleton */}
+        <div className="glow-card border-brand-dark-800 overflow-hidden bg-brand-dark-950/20">
+          <div className="p-6 border-b border-brand-dark-800 space-y-2">
+            <div className="h-5 bg-brand-dark-800 rounded w-1/4"></div>
+            <div className="h-3 bg-brand-dark-800 rounded w-1/3"></div>
+          </div>
+          <div className="p-6 space-y-4">
+            <div className="h-8 bg-brand-dark-900 rounded-lg w-full"></div>
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="flex justify-between items-center py-2 border-b border-brand-dark-900">
+                <div className="h-4 bg-brand-dark-900 rounded w-1/3"></div>
+                <div className="h-4 bg-brand-dark-900 rounded w-1/12"></div>
+                <div className="h-4 bg-brand-dark-900 rounded w-1/12"></div>
+                <div className="h-4 bg-brand-dark-900 rounded w-1/12"></div>
+                <div className="h-4 bg-brand-dark-900 rounded w-1/6"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (activeTab === 'qa') {
+    return (
+      <div className="space-y-6 animate-pulse">
+        {/* Search Row */}
+        <div className="flex gap-4 justify-between items-center">
+          <div className="h-10 bg-brand-dark-900 border border-brand-dark-800 rounded-xl w-64"></div>
+          <div className="h-10 bg-brand-dark-900 border border-brand-dark-800 rounded-xl w-32"></div>
+        </div>
+
+        {/* Q&A Overrides Skeleton */}
+        <div className="glow-card border-brand-dark-800 overflow-hidden bg-brand-dark-950/20">
+          <div className="p-6 border-b border-brand-dark-800 space-y-2">
+            <div className="h-5 bg-brand-dark-800 rounded w-1/4"></div>
+            <div className="h-3 bg-brand-dark-800 rounded w-1/3"></div>
+          </div>
+          <div className="divide-y divide-brand-dark-850">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="p-6 space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 bg-brand-dark-900 rounded"></div>
+                  <div className="h-4 bg-brand-dark-800 rounded w-1/2"></div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 bg-brand-dark-900 rounded flex-shrink-0"></div>
+                  <div className="space-y-2 flex-1 mt-1">
+                    <div className="h-3.5 bg-brand-dark-900 rounded w-11/12"></div>
+                    <div className="h-3.5 bg-brand-dark-900 rounded w-3/4"></div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (activeTab === 'chats') {
+    return (
+      <div className="space-y-6 animate-pulse">
+        <div className="flex justify-end">
+          <div className="h-10 bg-brand-dark-900 border border-brand-dark-800 rounded-xl w-44"></div>
+        </div>
+
+        <div className="glow-card border-brand-dark-800 overflow-hidden bg-brand-dark-950/20">
+          <div className="p-6 border-b border-brand-dark-800 space-y-2">
+            <div className="h-5 bg-brand-dark-800 rounded w-1/4"></div>
+            <div className="h-3 bg-brand-dark-800 rounded w-1/3"></div>
+          </div>
+          <div className="divide-y divide-brand-dark-850">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="p-6 space-y-3">
+                <div className="flex justify-between items-center">
+                  <div className="h-6 bg-brand-dark-900 rounded-full w-24"></div>
+                  <div className="h-3 bg-brand-dark-900 rounded w-16"></div>
+                </div>
+                <div className="space-y-2">
+                  <div className="h-4 bg-brand-dark-800 rounded w-3/4"></div>
+                  <div className="h-10 bg-brand-dark-900/60 rounded-lg w-full"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+}
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -401,7 +572,7 @@ export default function Dashboard() {
   const avgInteractions = totalChats > 0 ? (totalMessages / totalChats).toFixed(1) : 0;
 
   return (
-    <div className="min-h-screen bg-[#070708] flex relative">
+    <div className="h-screen overflow-hidden bg-[#070708] flex relative">
       {/* Sidebar backdrop overlay */}
       {sidebarOpen && (
         <div
@@ -478,6 +649,21 @@ export default function Dashboard() {
               <History className="w-4 h-4" />
               User Logs
             </button>
+
+            <div className="pt-4 border-t border-brand-dark-800 mt-4 space-y-2">
+              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest px-4">
+                Preview
+              </p>
+              <a
+                href="/?preview=true"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 text-gray-400 hover:text-brand-orange hover:bg-brand-orange/15"
+              >
+                <ExternalLink className="w-4 h-4" />
+                Live Chatbot
+              </a>
+            </div>
           </nav>
         </div>
 
@@ -558,7 +744,11 @@ export default function Dashboard() {
         </div>
 
         <div className="flex-1 overflow-y-auto px-4 md:px-8 pb-8">
-          {activeTab === 'overview' && (
+          {loading ? (
+            <DashboardSkeleton activeTab={activeTab} />
+          ) : (
+            <>
+              {activeTab === 'overview' && (
             <div className="space-y-8 animate-fade-in-up">
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                 <div className="glow-card p-3 sm:p-6 flex items-center justify-between gap-2">
@@ -1100,6 +1290,8 @@ export default function Dashboard() {
                 )}
               </div>
             </div>
+          )}
+            </>
           )}
         </div>
       </main>

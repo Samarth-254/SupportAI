@@ -16,6 +16,7 @@ export default function Sidebar({
   currentSessionId,
   suggestions = [],
   loading,
+  historyLoading = false,
   handleLogout,
   resetChat,
   loadSession,
@@ -67,7 +68,14 @@ export default function Sidebar({
       <div className="flex-1 overflow-hidden flex flex-col mt-4">
         {user ? (
           <div className="flex-1 overflow-y-auto px-4 pb-2">
-            {pastSessions.length > 0 ? (
+            {historyLoading ? (
+              <div className="space-y-2 animate-pulse mt-2">
+                <p className="text-xs font-semibold text-white mb-2 py-1">Recents</p>
+                <div className="h-8 bg-brand-dark-900 border border-brand-dark-800 rounded-lg w-full"></div>
+                <div className="h-8 bg-brand-dark-900 border border-brand-dark-800 rounded-lg w-11/12"></div>
+                <div className="h-8 bg-brand-dark-900 border border-brand-dark-800 rounded-lg w-4/5"></div>
+              </div>
+            ) : pastSessions.length > 0 ? (
               <div className="space-y-1">
                 <p className="text-xs font-semibold text-white mb-2 sticky top-0 py-1 bg-brand-dark-950/90 backdrop-blur-sm z-10">
                   Recents

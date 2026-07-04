@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../api';
 import Sidebar from '../components/Sidebar';
-import { Send, Bot, Menu } from 'lucide-react';
+import { Send, Bot, Menu, LayoutDashboard } from 'lucide-react';
 
 function getDateLabel(date) {
   const d = new Date(date);
@@ -75,6 +75,7 @@ export default function Chatbot() {
   const [suggestions, setSuggestions] = useState([]);
   const [pastSessions, setPastSessions] = useState([]);
   const [currentSessionId, setCurrentSessionId] = useState(`sess_${Date.now()}`);
+  const [historyLoading, setHistoryLoading] = useState(false);
 
   const messagesEndRef = useRef(null);
 
@@ -89,6 +90,7 @@ export default function Chatbot() {
       if (isAuthed) {
         const currentUser = api.auth.getCurrentUser();
         setUser(currentUser);
+        setHistoryLoading(true);
 
         try {
           const res = await api.chat.getUserHistory();
@@ -150,6 +152,8 @@ export default function Chatbot() {
           }
         } catch (err) {
           console.error('History fetch error:', err.message);
+        } finally {
+          setHistoryLoading(false);
         }
       }
     };
@@ -341,6 +345,7 @@ export default function Chatbot() {
         currentSessionId={currentSessionId}
         suggestions={suggestions}
         loading={loading}
+        historyLoading={historyLoading}
         handleLogout={handleLogout}
         resetChat={resetChat}
         loadSession={loadSession}
@@ -357,22 +362,49 @@ export default function Chatbot() {
       )}
 
       <main className="flex-1 flex flex-col overflow-hidden z-10">
-        <header className="flex-shrink-0 p-4 border-b border-brand-dark-800 bg-brand-dark-950/60 flex items-center gap-3">
-          <button
-            onClick={() => setSidebarOpen(true)}
-            title="Open sidebar"
-            className="md:hidden p-2 text-gray-400 hover:text-white bg-brand-dark-900 border border-brand-dark-800 rounded-xl flex items-center justify-center"
-          >
-            <Menu className="w-4 h-4" />
-          </button>
-          <Bot className="w-6 h-6 text-brand-orange flex-shrink-0" />
-          <div>
-            <h2 className="font-semibold text-white text-sm">SupportAI</h2>
+        <header className="flex-shrink-0 p-4 border-b border-brand-dark-800 bg-brand-dark-950/60 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              title="Open sidebar"
+              className="md:hidden p-2 text-gray-400 hover:text-white bg-brand-dark-900 border border-brand-dark-800 rounded-xl flex items-center justify-center"
+            >
+              <Menu className="w-4 h-4" />
+            </button>
+            <Bot className="w-6 h-6 text-brand-orange flex-shrink-0" />
+            <div>
+              <h2 className="font-semibold text-white text-sm">SupportAI</h2>
+            </div>
           </div>
+          {user?.role === 'admin' && (
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="text-[11px] font-medium text-gray-400 px-2.5 py-1.5 bg-brand-dark-900 border border-brand-dark-800 rounded-xl hover:text-white hover:bg-brand-dark-850 transition flex items-center gap-1.5"
+            >
+              <LayoutDashboard className="w-3.5 h-3.5 text-gray-400" />
+              Go to Dashboard
+            </button>
+          )}
         </header>
 
         <div className="flex-1 overflow-y-auto px-4 md:px-6 py-5 space-y-5">
-          {renderedItems.map((item) => {
+          {historyLoading ? (
+            <div className="space-y-4 animate-pulse">
+              <div className="flex flex-col items-start mr-auto max-w-[85%] md:max-w-[78%]">
+                <div className="h-12 bg-brand-dark-900 border border-brand-dark-800 rounded-2xl rounded-bl-sm w-48 sm:w-64"></div>
+                <div className="h-2 bg-brand-dark-900 rounded w-16 mt-2 ml-1"></div>
+              </div>
+              <div className="flex flex-col items-end ml-auto max-w-[85%] md:max-w-[78%]">
+                <div className="h-10 bg-brand-orange/20 border border-brand-orange/10 rounded-2xl rounded-br-sm w-36 sm:w-48"></div>
+                <div className="h-2 bg-brand-dark-900 rounded w-12 mt-2 mr-1"></div>
+              </div>
+              <div className="flex flex-col items-start mr-auto max-w-[85%] md:max-w-[78%]">
+                <div className="h-14 bg-brand-dark-900 border border-brand-dark-800 rounded-2xl rounded-bl-sm w-56 sm:w-72"></div>
+                <div className="h-2 bg-brand-dark-900 rounded w-20 mt-2 ml-1"></div>
+              </div>
+            </div>
+          ) : (
+            renderedItems.map((item) => {
             if (item.type === 'separator') {
               return <DateSeparator key={item.id} label={item.label} />;
             }
@@ -397,7 +429,8 @@ export default function Chatbot() {
                 </span>
               </div>
             );
-          })}
+          })
+          )}
 
           {loading && (
             <div className="flex flex-col items-start max-w-[85%] md:max-w-[78%] mr-auto">

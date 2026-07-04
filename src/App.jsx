@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useSearchParams } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
@@ -45,11 +45,25 @@ const GuestOnlyRoute = ({ children, adminOnly = false }) => {
     : <Navigate to="/" replace />;
 };
 
+const RootRoute = () => {
+  const [searchParams] = useSearchParams();
+  const user = api.auth.getCurrentUser();
+
+  if (searchParams.get('preview') === 'true') {
+    return <Chatbot />;
+  }
+
+  if (api.auth.isAuthenticated() && user?.role === 'admin') {
+    return <Navigate to="/dashboard" replace />;
+  }
+  return <Chatbot />;
+};
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Chatbot />} />
+        <Route path="/" element={<RootRoute />} />
 
         <Route
           path="/login"
